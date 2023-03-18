@@ -129,7 +129,7 @@ class MoviesController {
 
             throw new Error('No Movie was Found')
         } catch(e:any) {
-            res.status(400).json({
+            return res.status(400).json({
                 message:e.message
             })
         }
@@ -146,7 +146,7 @@ class MoviesController {
                 count:list.length
             })
         } catch (e:any) {
-            res.status(400).json({
+            return res.status(400).json({
                 message:e.message
             })
         }
