@@ -1,13 +1,24 @@
 import {createServer} from 'node:http';
+import path from 'node:path'
 import express from 'express'
 import cors from 'cors';
 import helmet from "helmet";
 import * as dotenv from 'dotenv';
 import * as mongoose from "mongoose";
 
+
 import mainRouter from './routes/v1/app.router'
 
-dotenv.config();
+const getDotEnvPath = (env:string) => {
+    if (env.toLowerCase() === 'TEST'.toLowerCase()) {
+        return '.env.test'
+    }
+    return '.env'
+}
+
+//dotenv.config();
+//@ts-ignore
+dotenv.config({path: path.resolve(process.cwd(), getDotEnvPath(process.env.NODE_ENV.toString().toLowerCase()))})
 
 
 
@@ -16,16 +27,15 @@ class App {
     constructor () {
         this.app = express();
         this.connectDB();
-        //this.listenTo();
         this.initializeProject();
-        this.applicationRouter();
     }
 
-    private initializeProject() {
+    public initializeProject() {
         this.app.use(cors({methods:'*'}))
         this.app.use(helmet())
         this.app.use(express.json())
         this.app.use(express.urlencoded({extended:true}))
+        this.applicationRouter();
     }
 
     private applicationRouter() {

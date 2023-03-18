@@ -43,10 +43,11 @@ class MoviesController {
                     message: 'You already have this movie in your list'
                 });
             }
+            //console.log(getMovie, lastMovie);
 
             // checking if the ranking from the last element is available, if it is, increment it by 1 else make it 1
             //@ts-ignore
-            let newMovieRanking:number = !lastMovie.value.ranking ? 1 : lastMovie.value.ranking + 1;
+            let newMovieRanking:number = !lastMovie?.value ? 1 : lastMovie.value?.ranking + 1;
 
             const addMovie = await this.movieService.addMovieToList({
                 tmbdId,
@@ -70,7 +71,7 @@ class MoviesController {
             }
 
         } catch (e:any) {
-            console.log(e);
+            //console.log(e);
             res.status(400).json({
                 message:e.message
             })
