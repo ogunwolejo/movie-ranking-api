@@ -24,11 +24,13 @@ class AppRouter {
         //@ts-ignore
         this.router.delete('/removeMovieFromList', this.authMiddleware, this.moviesController.deleteMovieFromList);
         //@ts-ignore
-        this.router.post('/getMovie', this.authMiddleware, this.moviesController.findMovie);
+        this.router.get('/movies/:movieId', this.authMiddleware, this.moviesController.findMovie);
         // @ts-ignore
         this.router.get('/movieList', this.authMiddleware, this.moviesController.movieList);
         //@ts-ignore
-        this.router.post('/updateMovie', this.authMiddleware, this.moviesController.updateMovie)
+        this.router.post('/updateMovie', this.authMiddleware, this.moviesController.updateMovie);
+        //@ts-ignore
+        this.router.post('/rankingMyMovies', this.authMiddleware, this.moviesController.rankMyMovieList);
 
     }
 

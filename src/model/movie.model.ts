@@ -33,6 +33,13 @@ const IMovie:Schema = new Schema({
     popularity:{
         type:Number,
         required:false
+    },
+    ranking:{
+        type:Number,
+        required:false,
+        unique:false,
+        min:1,
+        default:1
     }
 })
 

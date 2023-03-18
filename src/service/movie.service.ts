@@ -2,9 +2,10 @@ import MovieModel from "../model/movie.model";
 import {
     AddMovieInterface,
     checkForMovieInterface,
-    movieInterface,
+    movieInterface, myMovieListInterface,
     updateMovieInterface
 } from "../interface/movie.interface";
+import {startSession} from 'mongoose'
 
 class MovieService {
     public checkForMovie = async(arg:checkForMovieInterface) => {
@@ -12,11 +13,20 @@ class MovieService {
             tmbdId:arg.tmbdId,
             userId:arg.userId
         });
+        console.log(isMovie);
         if(isMovie.length > 0) {
             return true;
         }
 
         return false;
+    }
+
+    public getLastMovieRanking = async(userId:string) => {
+        const data = await MovieModel.find({userId}).sort({ranking:1});
+        //@ts-ignore
+        const index:number = data.length - 1;
+        const lastElement = data[index];
+        return lastElement;
     }
     public addMovieToList = async(movieData:AddMovieInterface) => {
         const createMovie = await MovieModel.create(movieData);
@@ -58,6 +68,7 @@ class MovieService {
             movieTitle:arg.movieTitle,
             voteAverage:arg.voteAverage,
             voteCount:arg.voteCount,
+            ranking:arg.ranking,
             //@ts-ignore
             movieOverview:arg.movieOverview?.trim().length > 0 ? arg.movieOverview : '',
             //@ts-ignore
@@ -65,6 +76,29 @@ class MovieService {
         })
         return updateSelectedMovie;
     }
+
+    public rankingMyMovies = async(data:myMovieListInterface) => {
+        return data.data.forEach(async (el, i:number) => {
+
+            const _result = await MovieModel.updateOne({_id: el.movieId, userId: data.userId}, {
+                tmbdId: el.tmbdId,
+                movieTitle: el.movieTitle,
+                voteAverage: el.voteAverage,
+                voteCount: el.voteCount,
+                ranking: el.ranking,
+                //@ts-ignore
+                movieOverview: el.movieOverview?.trim().length > 0 ? el.movieOverview : '',
+                //@ts-ignore
+                posterPath: el.posterPath?.trim().length > 0 ? el.posterPath : ''
+            });
+
+            //console.log(`elNo - ${i}`, _result);
+            return _result;
+        })
+
+
+    }
+
 }
 
 export default MovieService

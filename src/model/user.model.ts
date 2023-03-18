@@ -3,11 +3,12 @@ import {Schema, model, ObjectId} from "mongoose";
 const IUser:Schema = new Schema({
     fullName:{
         type:String,
-        required:false
+        required:true
     },
     email: {
         type:String,
-        required:true
+        required:true,
+        unique:true
     }
 })
 

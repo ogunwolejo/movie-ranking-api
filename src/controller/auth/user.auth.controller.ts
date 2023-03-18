@@ -1,7 +1,7 @@
 import {Request, Response, NextFunction} from "express";
-import UserModel from "../../model/user.model";
 import {HttpException} from "../../util/exception";
 import Token from "../../util/token";
+import createAndAuthorizeUser from '../../service/user.service'
 
 class UserAuthController {
     private token = new Token();
@@ -11,10 +11,7 @@ class UserAuthController {
         try {
             const {fullName, email} = req.body;
 
-            const createUser = await UserModel.create({
-                fullName,
-                email
-            })
+            const createUser = await createAndAuthorizeUser(email, fullName);
 
             if(createUser) {
                 //@ts-ignore
@@ -29,9 +26,10 @@ class UserAuthController {
             return new HttpException(500, 'Unable to create data');
 
         } catch (e:any) {
-            //console.log(e)
-            return res.status(e.response.status).json({
-                message: e.response.data.status_message
+            //console.log(e, e?.response, e?.code )
+            return res.status(400).json({
+                message: e?.message,
+                keyValue:e?.keyValue
             })
         }
     }

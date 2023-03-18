@@ -1,5 +1,4 @@
 import {createServer} from 'node:http';
-
 import express from 'express'
 import cors from 'cors';
 import helmet from "helmet";
@@ -13,11 +12,11 @@ dotenv.config();
 
 
 class App {
-    private app;
+    public app;
     constructor () {
         this.app = express();
         this.connectDB();
-        this.listenTo();
+        //this.listenTo();
         this.initializeProject();
         this.applicationRouter();
     }
@@ -49,7 +48,7 @@ class App {
         }
     }
 
-    private listenTo() {
+    public listenTo() {
         //@ts-ignore
         createServer(this.app).listen(+process.env.PORT, undefined, undefined, () => {
             console.log("server is working")
@@ -58,4 +57,6 @@ class App {
 }
 
 
-new App();
+export let myProjectApp = new App();
+
+

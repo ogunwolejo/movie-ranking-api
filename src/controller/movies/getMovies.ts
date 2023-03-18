@@ -1,7 +1,6 @@
 import {NextFunction, Request, Response} from "express";
 import Axios from 'axios';
 import {HttpException} from "../../util/exception";
-import MovieModel from "../../model/movie.model";
 import MovieService from "../../service/movie.service";
 
 class MoviesController {
@@ -23,7 +22,7 @@ class MoviesController {
             return new HttpException(404, 'Movies current not available')
 
         } catch (e:any) {
-            //console.log(e);
+            console.log(e);
             res.status(e.response.status).json({
                 message:e.response.data.status_message
             })
@@ -38,13 +37,16 @@ class MoviesController {
 
             // check if the movie user is adding already exist in the user's list
             //@ts-ignore
-            const getMovie = await this.movieService.checkForMovie({tmbdId, userId:req?.id});
-
-            if(getMovie) {
+            const [getMovie, lastMovie]:[any] = await Promise.allSettled([this.movieService.checkForMovie({tmbdId, userId:req?.id}), this.movieService.getLastMovieRanking(req?.id)]);
+            if(getMovie?.value) {
                 return res.status(200).json({
                     message: 'You already have this movie in your list'
                 });
             }
+
+            // checking if the ranking from the last element is available, if it is, increment it by 1 else make it 1
+            //@ts-ignore
+            let newMovieRanking:number = !lastMovie.value.ranking ? 1 : lastMovie.value.ranking + 1;
 
             const addMovie = await this.movieService.addMovieToList({
                 tmbdId,
@@ -54,7 +56,8 @@ class MoviesController {
                 movieOverview,
                 posterPath,
                 //@ts-ignore
-                userId: req?.id
+                userId: req?.id,
+                ranking: newMovieRanking
             })
 
             if(addMovie) {
@@ -63,12 +66,13 @@ class MoviesController {
                     message: 'movie added to list'
                 })
             } else {
-                throw Error();
+                throw Error('Movie not add');
             }
 
         } catch (e:any) {
-            res.status(e.response.status).json({
-                message:e.response.data.status_message
+            console.log(e);
+            res.status(400).json({
+                message:e.message
             })
         }
     }
@@ -102,17 +106,18 @@ class MoviesController {
             }
 
         } catch (e:any) {
-            console.log(e);
-            res.status(500).json({
-                message:'error'
+            res.status(400).json({
+                message:e.message
             })
         }
     }
 
     //find a movie
     public findMovie = async(req:Request, res:Response) => {
+
         try {
-            const {movieId} = req.body;
+            const {movieId} = req.params;
+            //const {movieId} = req.body;
             //@ts-ignore
             const getMovie = await this.movieService.getMovie({movieId, userId:req.id})
             if(getMovie) {
@@ -123,8 +128,8 @@ class MoviesController {
 
             throw new Error('No Movie was Found')
         } catch(e:any) {
-            res.status(e.response.status).json({
-                message:e.response.data.statusMessage
+            res.status(400).json({
+                message:e.message
             })
         }
 
@@ -140,8 +145,8 @@ class MoviesController {
                 count:list.length
             })
         } catch (e:any) {
-            res.status(e.response.status).json({
-                message:e.response.data.statusMessage
+            res.status(400).json({
+                message:e.message
             })
         }
     }
@@ -149,7 +154,7 @@ class MoviesController {
     //update a movie
     public updateMovie = async(req:Request, res:Response) => {
         try {
-            const {movieId, tmbdId, movieTitle, voteAverage, voteCount, movieOverview, posterPath } = req.body;
+            const {movieId, tmbdId, movieTitle, voteAverage, voteCount, movieOverview, posterPath, ranking } = req.body;
 
             // check if the movie to be deleted is in the user list
             //@ts-ignore
@@ -161,7 +166,7 @@ class MoviesController {
                 })
             }
 
-            const updateMovie = await this.movieService.updateMovie({movieId, tmbdId, movieTitle, voteAverage, voteCount, movieOverview, posterPath })
+            const updateMovie = await this.movieService.updateMovie({movieId, tmbdId, movieTitle, voteAverage, voteCount, movieOverview, posterPath, ranking })
 
             if(updateMovie.acknowledged) {
                 return res.status(200).json({
@@ -173,7 +178,24 @@ class MoviesController {
             }
 
         } catch (e:any) {
-            res.status(500).json({
+            res.status(400).json({
+                message:e.message
+            })
+        }
+    }
+
+
+    public rankMyMovieList = async(req:Request, res:Response) => {
+        try {
+            const {data} = req.body;
+            //@ts-ignore
+            const myRanking = this.movieService.rankingMyMovies({userId:req.id, data});
+            console.log(`ranking data: ${myRanking}`)
+
+            return res.status(200).json({rankedList:myRanking})
+        } catch (e:any) {
+            console.log(e);
+            res.status(400).json({
                 message:e.message
             })
         }
