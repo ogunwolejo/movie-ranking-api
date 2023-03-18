@@ -24,7 +24,7 @@ const IMovie:Schema = new Schema({
     },
     movieOverview: {
         type:String,
-        required:false
+        required:false,
     },
     posterPath:{
         type:String,
