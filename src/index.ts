@@ -9,7 +9,7 @@ import * as mongoose from "mongoose";
 
 import mainRouter from './routes/v1/app.router'
 
-const getDotEnvPath = (env:string) => {
+/*const getDotEnvPath = (env:string) => {
     if (env.toLowerCase() === 'TEST'.toLowerCase()) {
         return '.env.test'
     }
@@ -18,8 +18,8 @@ const getDotEnvPath = (env:string) => {
 
 //dotenv.config();
 //@ts-ignore
-dotenv.config({path: path.resolve(process.cwd(), getDotEnvPath(process.env.NODE_ENV.toString().toLowerCase()))})
-
+dotenv.config({path: path.resolve(process.cwd(), getDotEnvPath(process.env.NODE_ENV.toString().toLowerCase()))})*/
+dotenv.config();
 
 
 class App {

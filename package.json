@@ -10,7 +10,7 @@
     "watch": "cross-env NODE_ENV=development nodemon src/server.ts",
     "dev": "cross-env NODE_ENV=development ts-node src/server.ts",
     "dev-watch": "cross-env NODE_ENV=development node ./build/src/server.js",
-    "start": "pm2 start ./build/pm2.config.js",
+    "start": "cross-env NODE_ENV=production pm2 start ./build/src/server.js -i max",
     "build": "tsc"
   },
   "author": "Joshua Ogunwole",
