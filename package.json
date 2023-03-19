@@ -10,7 +10,7 @@
     "watch": "cross-env NODE_ENV=development nodemon src/server.ts",
     "dev": "cross-env NODE_ENV=development ts-node src/server.ts",
     "dev-watch": "node dist/server.js",
-    "start": "pm2 start pm2.config.js",
+    "start": "pm2 start ./dist/pm2.config.js",
     "build": "tsc"
   },
   "author": "Joshua Ogunwole",
