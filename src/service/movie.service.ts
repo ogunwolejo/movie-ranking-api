@@ -78,7 +78,8 @@ class MovieService {
     }
 
     public rankingMyMovies = async(data:myMovieListInterface) => {
-        return data.data.forEach(async (el, i:number) => {
+        const result:any[] = [];
+        data.data.forEach(async (el, i:number) => {
 
             const _result = await MovieModel.updateOne({_id: el.movieId, userId: data.userId}, {
                 tmbdId: el.tmbdId,
@@ -92,11 +93,9 @@ class MovieService {
                 posterPath: el.posterPath?.trim().length > 0 ? el.posterPath : ''
             });
 
-            //console.log(`elNo - ${i}`, _result);
-            return _result;
+            result.push(_result);
         })
-
-
+        return result
     }
 
 }

@@ -190,10 +190,10 @@ class MoviesController {
         try {
             const {data} = req.body;
             //@ts-ignore
-            const myRanking = this.movieService.rankingMyMovies({userId:req.id, data});
+            const myRanking = await this.movieService.rankingMyMovies({userId:req.id, data});
             console.log(`ranking data: ${myRanking}`)
 
-            return res.status(200).json({rankedList:myRanking})
+            return res.status(200).json({message:"updated list"})
         } catch (e:any) {
             console.log(e);
             res.status(400).json({

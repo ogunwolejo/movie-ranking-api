@@ -7,11 +7,8 @@ module.exports = {
             exec_mode: 'cluster',
             watch: false,
             env: {
-                NODE_ENV: 'development',
+                NODE_ENV: 'production',
             },
         },
     ]
 }
-
-//
-//production
