@@ -9,3 +9,4 @@ class Server {
 new Server();
 
 //cross-env NODE_ENV=production pm2 start ./build/src/server.js -i max
+//cross-env NODE_ENV=production node ./build/src/server.js
